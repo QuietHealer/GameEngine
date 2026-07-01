@@ -20,6 +20,7 @@ int main()
         SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
+        // hi
     }
 
     SDL_Event e;
