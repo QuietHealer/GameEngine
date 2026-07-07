@@ -1,62 +1,81 @@
-#include "../Engine//Engine.h"
-#include "SDL3/SDL.h"
+#include "Engine.h"
 
-#include <iostream>
+
+using namespace nu;
+
 
 int main()
 {
-    SDL_Init(SDL_INIT_VIDEO);
+    // INITALIZATION
+    nu::Renderer renderer;
+    renderer.Initialize("Game Engine", 1920, 1024);
 
-    SDL_Window* window = SDL_CreateWindow("SDL3 Project", 1280, 1024, 0);
-    if (window == nullptr) {
-        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-        SDL_Quit();
-        return 1;
+    nu::Input input;
+    input.Initialize();
+
+    //std::cout << sizeof(Vector2) << std::endl;
+    Vector2 vel{ 0.5f, 0.0f };
+
+    std::vector<Vector2> v;
+
+    for (int i = 0; i < 300; i++)
+    {
+        v.push_back({ nu::RandomFloat(1280), nu::RandomFloat(1024) });
     }
-
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
-    if (renderer == nullptr) {
-        std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
-        // hi
-    }
-
-    SDL_Event e;
+    
     bool quit = false;
 
-    // Define a rectangle
-    SDL_FRect greenSquare{ 270, 190, 200, 200 };
-
-    while (!quit) {
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_EVENT_QUIT) {
+    while (!quit) 
+    {
+        
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) 
+        {
+            if (event.type == SDL_EVENT_QUIT) 
+            {
+                quit = true;
+            }
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.scancode == SDL_SCANCODE_ESCAPE)
+            {
                 quit = true;
             }
         }
 
+        input.Update();
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set render draw color to black
-        //SDL_SetRenderDrawColor(renderer, rand() % 256, rand() % 256, rand() % 256, rand() % 256);
-        SDL_RenderClear(renderer); // Clear the renderer
+        renderer.SetColor(0.0f, 0.0f, 0.0f);
+        renderer.Clear();
 
-        SDL_SetRenderDrawColor(renderer, rand() % 256, rand() % 256, rand() % 256, rand() % 256); // Set render draw color to green
-        SDL_RenderPoint(renderer, rand() % 1280, rand() % 1024);
+        for (int i = 0; i < v.size(); i++) 
+        {
+            renderer.SetColor(RandomFloat(), RandomFloat(), RandomFloat(), RandomFloat());
+
+            v[i] = v[i] + vel;
+            renderer.DrawPoint(v[i].x, v[i].y);
+        }
+
+        renderer.SetColor(1.0f, 1.0f, 1.0f);
+        renderer.DrawFillRect(input.GetMousePosition().x - 20, input.GetMousePosition().y - 20, 40, 40);
+
+        for (int i = 0; i < 1000; i++)
+        {
+            renderer.SetColor(RandomFloat(), RandomFloat(), RandomFloat(), RandomFloat());
+            renderer.DrawRect(rand() % 1280, rand() % 1024, rand() % 256, rand() % 256);
+        }
+
+        
 
 
-        SDL_SetRenderDrawColor(renderer, rand() % 256, rand() % 256, rand() % 256, rand() % 256); // Set render draw color to green
-        SDL_RenderFillRect(renderer, &greenSquare); // Render the rectangle
+        renderer.SetColor(RandomFloat(), RandomFloat(), RandomFloat(), RandomFloat()); // Set render draw color to green
+        renderer.DrawFillRect(40, 40, 40 ,40); // Render the rectangle
 
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        SDL_RenderDebugText(renderer, 10, 10, "Helle World!");
+        
 
-        SDL_RenderPresent(renderer); // Render the screen
+        renderer.Present(); // Render the screen
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
+    renderer.Shutdown();
+    
     return 0;
+}
 
