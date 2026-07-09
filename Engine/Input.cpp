@@ -31,4 +31,9 @@ namespace nu
 		m_prevButtonStates = m_buttonStates;
 		m_buttonStates = SDL_GetMouseState(&m_mousePosition.x, &m_mousePosition.y);
 	}
+	uint32_t Input::GetButtonBit(MouseButton button) const
+	{
+
+		return SDL_BUTTON_MASK((uint32_t)button);
+	}
 };

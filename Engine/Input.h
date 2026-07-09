@@ -9,12 +9,13 @@ namespace nu
 	class Input
 	{
 	public:
-		enum MouseButton
+		enum class MouseButton
 		{
 			Left = 1,
 			Middle,
 			Right,
 		};
+
 	public:
 		bool Initialize();
 		void Shutdown();
@@ -26,9 +27,15 @@ namespace nu
 		bool GetKeyPressed(int key) const { return !m_keyStates[key] && m_keyStates[key]; }
 		bool GetKeyReleased(int key) const { return m_prevKeyStates[key] && !m_keyStates[key]; }
 
-		bool GetMouseDown(int button) const { return false; }
+		bool GetButtonDown(MouseButton button) const { return m_buttonStates & GetButtonBit(button); }
+		bool GetPrevButtonDown(MouseButton button) const { return m_prevButtonStates & GetButtonBit(button); }
+		bool GetButtonPressed(MouseButton button) const { return !GetPrevButtonDown(button) && GetButtonDown(button); }
+		bool GetButtonReleased(MouseButton button) const { return GetPrevButtonDown(button) && !GetButtonDown(button); }
 
 		Vector2 GetMousePosition() { return m_mousePosition; }
+
+	private:
+		uint32_t GetButtonBit(MouseButton button) const;
 
 	private:
 		std::vector<bool> m_keyStates;
