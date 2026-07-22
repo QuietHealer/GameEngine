@@ -24,7 +24,7 @@ namespace nu
 
 		bool GetKeyDown(int key) const { return m_keyStates[key]; }
 		bool GetPrevKeyDown(int key) const { return m_prevKeyStates[key]; }
-		bool GetKeyPressed(int key) const { return !m_keyStates[key] && m_keyStates[key]; }
+		bool GetKeyPressed(int key) const { return !m_prevKeyStates[key] && m_keyStates[key]; }
 		bool GetKeyReleased(int key) const { return m_prevKeyStates[key] && !m_keyStates[key]; }
 
 		bool GetButtonDown(MouseButton button) const { return m_buttonStates & GetButtonBit(button); }
